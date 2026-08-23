@@ -4,7 +4,7 @@ WORKDIR /frontend
 
 COPY package.json package-lock.json ./
 
-RUN npm ci
+RUN npm ci && npm install @rollup/rollup-linux-x64-gnu --no-save
 
 COPY . /frontend
 
