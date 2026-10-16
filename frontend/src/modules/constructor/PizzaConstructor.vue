@@ -14,9 +14,21 @@ defineProps({
     type: Object,
     default: () => ({}),
   },
+  price: {
+    type: Number,
+    default: 0,
+  },
+  modelValue: {
+    type: String,
+    default: "",
+  },
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
 });
 
-const emit = defineEmits(["drop"]);
+const emit = defineEmits(["drop", "update:modelValue"]);
 </script>
 
 <template>
@@ -27,6 +39,8 @@ const emit = defineEmits(["drop"]);
         type="text"
         name="pizza_name"
         placeholder="Введите название пиццы"
+        :value="modelValue"
+        @input="emit('update:modelValue', $event.target.value)"
       />
     </label>
 
@@ -53,13 +67,17 @@ const emit = defineEmits(["drop"]);
     </div>
 
     <div class="content__result">
-      <p>Итого: 0 ₽</p>
-      <button type="button" class="button" disabled>Готовьте!</button>
+      <p>Итого: {{ price }} ₽</p>
+      <button type="button" class="button" :disabled="disabled">
+        Готовьте!
+      </button>
     </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
+@import "@/assets/scss/ds-system/ds.scss";
+
 .content__constructor {
   width: 315px;
   margin-top: 25px;
@@ -244,8 +262,6 @@ const emit = defineEmits(["drop"]);
 }
 
 .content__result {
-  @import "@/assets/scss/ds-system/ds.scss";
-
   display: flex;
   align-items: center;
   justify-content: center;
