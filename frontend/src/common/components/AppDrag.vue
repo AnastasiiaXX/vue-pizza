@@ -1,5 +1,5 @@
 <script setup>
-import { DATA_TRANSFER_PAYLOAD } from '@/common/constants/index.js';
+import { DATA_TRANSFER_PAYLOAD } from "@/common/constants/index.js";
 
 const props = defineProps({
   canDrag: {

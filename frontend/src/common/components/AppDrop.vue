@@ -1,7 +1,7 @@
 <script setup>
-import { DATA_TRANSFER_PAYLOAD } from '@/common/constants/index.js';
+import { DATA_TRANSFER_PAYLOAD } from "@/common/constants/index.js";
 
-const emit = defineEmits(['drop']);
+const emit = defineEmits(["drop"]);
 function onDrop({ dataTransfer }) {
   if (!dataTransfer) {
     return;
@@ -11,7 +11,7 @@ function onDrop({ dataTransfer }) {
   if (!data) {
     return;
   }
-  emit('drop', JSON.parse(data));
+  emit("drop", JSON.parse(data));
 }
 </script>
 
