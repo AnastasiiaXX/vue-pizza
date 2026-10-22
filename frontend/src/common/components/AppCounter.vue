@@ -8,17 +8,25 @@ defineProps({
     type: Number,
     default: Infinity,
   },
+  min: {
+    type: Number,
+    default: 0,
+  },
+  accent: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const emit = defineEmits(["update"]);
 </script>
 
 <template>
-  <div class="counter counter--orange">
+  <div class="counter">
     <button
       type="button"
       class="counter__button counter__button--minus"
-      :disabled="count === 0"
+      :disabled="count <= min"
       @click="emit('update', count - 1)"
     >
       <span class="visually-hidden">Меньше</span>
@@ -27,6 +35,7 @@ const emit = defineEmits(["update"]);
     <button
       type="button"
       class="counter__button counter__button--plus"
+      :class="{ 'counter__button--orange': accent }"
       :disabled="count >= max"
       @click="emit('update', count + 1)"
     >
@@ -41,7 +50,6 @@ const emit = defineEmits(["update"]);
 
 .counter {
   display: flex;
-
   justify-content: space-between;
   align-items: center;
 }
@@ -51,17 +59,13 @@ const emit = defineEmits(["update"]);
   $size_icon: 50%;
 
   position: relative;
-
   display: block;
-
   width: 16px;
   height: 16px;
   margin: 0;
   padding: 0;
-
   cursor: pointer;
   transition: 0.3s;
-
   border: none;
   border-radius: 50%;
   outline: none;
@@ -74,9 +78,7 @@ const emit = defineEmits(["update"]);
 
       width: $size_icon;
       height: 2px;
-
       content: "";
-
       border-radius: 2px;
       background-color: $black;
     }
@@ -110,9 +112,7 @@ const emit = defineEmits(["update"]);
 
       width: $size_icon;
       height: 2px;
-
       content: "";
-
       border-radius: 2px;
       background-color: $white;
     }
@@ -122,10 +122,8 @@ const emit = defineEmits(["update"]);
 
       width: $size_icon;
       height: 2px;
-
       content: "";
       transform: translate(-50%, -50%) rotate(90deg);
-
       border-radius: 2px;
       background-color: $white;
     }
@@ -168,7 +166,6 @@ const emit = defineEmits(["update"]);
   width: 22px;
   margin: 0;
   padding: 0 3px;
-
   text-align: center;
   color: $black;
   border: none;
