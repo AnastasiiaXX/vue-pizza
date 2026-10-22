@@ -2,7 +2,8 @@ export default (pizzaParts, data) => {
   const doughPrice =
     data.doughItems.find((item) => item.id === pizzaParts.doughId)?.price ?? 0;
   const sizeMultiplier =
-    data.sizeItems.find((item) => item.id === pizzaParts.sizeId)?.multiplier ?? 1;
+    data.sizeItems.find((item) => item.id === pizzaParts.sizeId)?.multiplier ??
+    1;
   const saucePrice =
     data.sauceItems.find((item) => item.id === pizzaParts.sauceId)?.price ?? 0;
 

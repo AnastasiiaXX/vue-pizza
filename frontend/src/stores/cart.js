@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import {useDataStore} from "./data";
+import { useDataStore } from "./data";
 import countPizzaPrice from "../common/helpers/countPizzaPrice";
 export const useCartStore = defineStore("cart", {
   state: () => ({
@@ -24,10 +24,35 @@ export const useCartStore = defineStore("cart", {
     getPizzasPrice: (state) => {
       const data = useDataStore();
       return state.pizzas.reduce((total, item) => {
-        return total + countPizzaPrice(item, data) * item.quantity
+        return total + countPizzaPrice(item, data) * item.quantity;
       }, 0);
     },
   },
   getTotal: (state) => state.getMiscPrice + state.getPizzasPrice,
-  actions: {},
+  actions: {
+    setMiscCount(miscId, newCount) {
+      const index = this.misc.findIndex((item) => item.miscId === miscId);
+      if (index === -1 && newCount > 0) {
+        this.misc.push({ miscId, quantity: newCount });
+        return;
+      }
+      if (index !== -1 && newCount === 0) {
+        this.misc.splice(index, 1);
+        return;
+      }
+      if (index !== -1 && newCount > 0) {
+        this.misc[index].quantity = newCount;
+      }
+    },
+    setPizzaCount(index, newCount) {
+      if (!this.pizzas[index]) {
+        return;
+      }
+      if (newCount === 0) {
+        this.pizzas.splice(index, 1);
+        return;
+      }
+      this.pizzas[index].quantity = newCount;
+    },
+  },
 });
