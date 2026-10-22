@@ -3,6 +3,7 @@ import dough from "@/mocks/dough.json";
 import sizes from "@/mocks/sizes.json";
 import ingredients from "@/mocks/ingredients.json";
 import sauces from "@/mocks/sauces.json";
+import misc from "@/mocks/misc.json";
 
 import doughSizes from "@/common/data/doughSizes.js";
 import pizzaSizes from "@/common/data/sizes.js";
@@ -18,5 +19,6 @@ export const useDataStore = defineStore("data", {
     ingredientItems: ingredients.map((ingredient) =>
       normalize(ingredient, ingredientsEnglishNames),
     ),
+    misc: misc,
   }),
 });
