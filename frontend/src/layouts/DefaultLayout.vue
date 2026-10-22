@@ -1,5 +1,5 @@
 <template>
-  <div class="app_layout">
+  <div class="default-layout">
     <app-header />
     <slot />
   </div>
@@ -11,7 +11,7 @@ import AppHeader from "./AppHeader.vue";
 
 <style lang="scss" scoped>
 .default-layout {
-  height: 100%;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   flex: 1;

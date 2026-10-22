@@ -192,8 +192,6 @@ function dropIngredients(ingredient) {
   }
 }
 
-
-
 .sheet__title {
   padding-right: 18px;
   padding-left: 18px;
@@ -244,8 +242,6 @@ function dropIngredients(ingredient) {
     margin-bottom: 16px;
   }
 }
-
-
 
 .ingredients__list {
   @include clear-list;
@@ -303,6 +299,5 @@ function dropIngredients(ingredient) {
       }
     }
   }
-
 }
 </style>
