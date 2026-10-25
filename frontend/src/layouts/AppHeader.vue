@@ -1,3 +1,10 @@
+<script setup>
+import { useCartStore } from "../stores";
+import { useProfileStore } from "../stores";
+
+const cartStore = useCartStore();
+const profileStore = useProfileStore();
+</script>
 <template>
   <header class="header">
     <div class="header__logo">
@@ -11,14 +18,16 @@
       </router-link>
     </div>
     <div class="header__cart">
-      <router-link :to="{ name: 'cart' }">0 ₽</router-link>
+      <router-link :to="{ name: 'cart' }"
+        >{{ cartStore.getTotal }} ₽</router-link
+      >
     </div>
-    <div class="header__user">
+    <div v-if="profileStore.user === null" class="header__user">
       <router-link :to="{ name: 'login' }" class="header__login"
         ><span>Войти</span></router-link
       >
     </div>
-    <div class="header__user">
+    <div v-else class="header__user">
       <router-link :to="{ name: 'profile' }">
         <picture>
           <source
@@ -36,7 +45,7 @@
             height="32"
           />
         </picture>
-        <span>Василий Ложкин</span>
+        <span>{{ profileStore.user.name }}</span>
       </router-link>
       <router-link :to="{ name: 'home' }" class="header__logout"
         ><span>Выйти</span></router-link
@@ -51,11 +60,8 @@
 .header {
   position: relative;
   z-index: 2;
-
   display: flex;
-
   padding: 0 2.12%;
-
   background-color: $green-500;
   box-shadow: $shadow-light;
 }
@@ -73,14 +79,11 @@
     @include b-s16-h19;
 
     display: block;
-
     padding-top: 21px;
     padding-right: 15px;
     padding-bottom: 21px;
     padding-left: 58px;
-
     transition: 0.3s;
-
     color: $white;
     background-color: $green-500;
     background-image: url("@/assets/img/cart.svg");

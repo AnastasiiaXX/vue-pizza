@@ -1,4 +1,8 @@
-<script setup></script>
+<script setup>
+import { useProfileStore } from "../stores";
+
+const profileStore = useProfileStore();
+</script>
 <template>
   <div class="layout__title">
     <h1 class="title title--big">Мои данные</h1>
@@ -27,18 +31,24 @@
     <p class="user__phone">Контактный телефон: <span>+7 999-999-99-99</span></p>
   </div>
 
-  <div class="layout__address">
+  <div
+    v-for="(address, index) in profileStore.addresses"
+    :key="address.id"
+    class="layout__address"
+  >
     <div class="sheet address-form">
       <div class="address-form__header">
-        <b>Адрес №1. Тест</b>
+        <b>Адрес №{{ index + 1 }}. {{ address.name }}</b>
         <div class="address-form__edit">
           <button type="button" class="icon">
             <span class="visually-hidden">Изменить адрес</span>
           </button>
         </div>
       </div>
-      <p>Невский пр., д. 22, кв. 46</p>
-      <small>Позвоните, пожалуйста, от проходной</small>
+      <p>
+        {{ address.street }}, д. {{ address.building }}, кв. {{ address.flat }}
+      </p>
+      <small>{{ address.comment }}</small>
     </div>
   </div>
 
@@ -151,7 +161,6 @@
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-
   margin-bottom: 33px;
 }
 
@@ -162,14 +171,12 @@
 
   span {
     display: inline-block;
-
     vertical-align: middle;
   }
 }
 
 .user__button {
   display: inline-block;
-
   cursor: pointer;
   vertical-align: middle;
 }
@@ -189,7 +196,6 @@
   $bl: &;
 
   position: relative;
-
   padding-top: 0;
   padding-bottom: 26px;
 
@@ -211,7 +217,6 @@
     @include l-s11-h13;
 
     display: block;
-
     padding: 0 16px;
   }
 }
@@ -220,7 +225,6 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-
   width: 80%;
   padding: 16px;
 }
@@ -243,7 +247,6 @@
 .address-form__buttons {
   display: flex;
   justify-content: flex-end;
-
   padding: 0 16px;
 
   button {
@@ -258,7 +261,6 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-
   margin-bottom: 21px;
   padding: 10px 16px;
 
@@ -268,12 +270,9 @@
 .icon {
   display: block;
   overflow: hidden;
-
   width: 32px;
   height: 32px;
-
   transition: 0.3s;
-
   border: none;
   border-radius: 50%;
   outline: none;

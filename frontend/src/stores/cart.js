@@ -27,8 +27,30 @@ export const useCartStore = defineStore("cart", {
         return total + countPizzaPrice(item, data) * item.quantity;
       }, 0);
     },
+    getTotal: (state) => state.getMiscPrice + state.getPizzasPrice,
+    getPizzasExtended: (state) => {
+      const data = useDataStore();
+      return state.pizzas.map((pizza) => ({
+        name: pizza.name,
+        quantity: pizza.quantity,
+        dough: data.doughItems.find((item) => item.id === pizza.doughId),
+        size: data.sizeItems.find((item) => item.id === pizza.sizeId),
+        sauce: data.sauceItems.find((item) => item.id === pizza.sauceId),
+        price: countPizzaPrice(pizza, data),
+        ingredients: data.ingredientItems.filter(
+          (item) => pizza.ingredients[item.value] > 0,
+        ),
+      }));
+    },
+    getMiscExtended: (state) => {
+      const data = useDataStore();
+      return data.misc.map((item) => ({
+        ...item,
+        quantity:
+          state.misc.find((misc) => misc.miscId === item.id)?.quantity ?? 0,
+      }));
+    },
   },
-  getTotal: (state) => state.getMiscPrice + state.getPizzasPrice,
   actions: {
     setMiscCount(miscId, newCount) {
       const index = this.misc.findIndex((item) => item.miscId === miscId);
@@ -53,6 +75,28 @@ export const useCartStore = defineStore("cart", {
         return;
       }
       this.pizzas[index].quantity = newCount;
+    },
+    savePizza(pizza) {
+      if (pizza.index !== null) {
+        const quantity = this.pizzas[pizza.index].quantity;
+        this.pizzas[pizza.index] = {
+          ...pizza,
+          quantity: quantity,
+          ingredients: { ...pizza.ingredients },
+        };
+      } else {
+        this.pizzas.push({
+          ...pizza,
+          quantity: 1,
+          ingredients: { ...pizza.ingredients },
+        });
+      }
+    },
+    setPhone(phone) {
+      this.phone = phone;
+    },
+    setAddressField(field, value) {
+      this.address[field] = value;
     },
   },
 });
