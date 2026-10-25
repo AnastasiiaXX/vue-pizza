@@ -28,7 +28,7 @@ defineProps({
   },
 });
 
-const emit = defineEmits(["drop", "update:modelValue"]);
+const emit = defineEmits(["drop", "update:modelValue", "submit"]);
 </script>
 
 <template>
@@ -68,7 +68,12 @@ const emit = defineEmits(["drop", "update:modelValue"]);
 
     <div class="content__result">
       <p>Итого: {{ price }} ₽</p>
-      <button type="button" class="button" :disabled="disabled">
+      <button
+        type="button"
+        class="button"
+        :disabled="disabled"
+        @click="emit('submit')"
+      >
         Готовьте!
       </button>
     </div>
@@ -122,12 +127,9 @@ const emit = defineEmits(["drop", "update:modelValue"]);
   position: absolute;
   top: 0;
   left: 0;
-
   display: block;
-
   width: 100%;
   height: 100%;
-
   background-repeat: no-repeat;
   background-position: center;
   background-size: 100%;
@@ -139,19 +141,15 @@ const emit = defineEmits(["drop", "update:modelValue"]);
     position: absolute;
     top: 0;
     left: 0;
-
     width: 100%;
     height: 100%;
-
     content: "";
-
     background-image: inherit;
   }
 
   &--second {
     &::before {
       display: block;
-
       transform: rotate(45deg);
     }
   }
@@ -159,13 +157,11 @@ const emit = defineEmits(["drop", "update:modelValue"]);
   &--third {
     &::before {
       display: block;
-
       transform: rotate(45deg);
     }
 
     &::after {
       display: block;
-
       transform: rotate(-45deg);
     }
   }
@@ -265,7 +261,6 @@ const emit = defineEmits(["drop", "update:modelValue"]);
   display: flex;
   align-items: center;
   justify-content: center;
-
   margin-top: 25px;
 
   p {

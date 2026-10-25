@@ -1,13 +1,11 @@
 <script setup>
-import sauces from "@/common/data/sauces.js";
-
 defineProps({
   items: {
     type: Array,
     required: true,
   },
   modelValue: {
-    type: String,
+    type: Number,
     required: true,
   },
 });
@@ -27,9 +25,9 @@ const emit = defineEmits(["update:modelValue"]);
       <input
         type="radio"
         name="sauce"
-        :value="sauces[sauce.id]"
-        :checked="sauces[sauce.id] === modelValue"
-        @change="emit('update:modelValue', sauces[sauce.id])"
+        :value="sauce.id"
+        :checked="sauce.id === modelValue"
+        @change="emit('update:modelValue', sauce.id)"
       />
       <span>{{ sauce.name }}</span>
     </label>

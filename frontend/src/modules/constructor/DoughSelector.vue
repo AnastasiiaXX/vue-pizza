@@ -7,7 +7,7 @@ defineProps({
     required: true,
   },
   modelValue: {
-    type: String,
+    type: Number,
     required: true,
   },
 });
@@ -29,10 +29,10 @@ const emit = defineEmits(["update:modelValue"]);
           <input
             type="radio"
             name="dought"
-            :value="doughSizes[doughtItem.id]"
-            :checked="doughSizes[doughtItem.id] === modelValue"
+            :value="doughtItem.id"
+            :checked="doughtItem.id === modelValue"
             class="visually-hidden"
-            @change="emit('update:modelValue', doughSizes[doughtItem.id])"
+            @change="emit('update:modelValue', doughtItem.id)"
           />
           <b>{{ doughtItem.name }}</b>
           <span>{{ doughtItem.description }}</span>

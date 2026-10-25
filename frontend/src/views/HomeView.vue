@@ -1,75 +1,64 @@
 <script setup>
-import { reactive, computed } from "vue";
-import { MAX_INGREDIENT_COUNT } from "@/common/constants/index.js";
-
-import dough from "@/mocks/dough.json";
-import sizes from "@/mocks/sizes.json";
-import ingredients from "@/mocks/ingredients.json";
-import sauces from "@/mocks/sauces.json";
-
-import doughSizes from "@/common/data/doughSizes.js";
-import pizzaSizes from "@/common/data/sizes.js";
-import ingredientsEnglishNames from "@/common/data/ingredients.js";
-import saucesEnglishNames from "@/common/data/sauces.js";
-import normalize from "@/common/helpers/normalize.js";
-
+import { computed } from "vue";
+import { useCartStore, useDataStore, usePizzaStore } from "../stores";
+import { useRouter } from "vue-router";
 import DoughSelector from "@/modules/constructor/DoughSelector.vue";
 import DiameterSelector from "@/modules/constructor/DiameterSelector.vue";
 import SauceSelector from "@/modules/constructor/SauceSelector.vue";
 import IngredientSelector from "@/modules/constructor/IngredientSelector.vue";
 import PizzaConstructor from "@/modules/constructor/PizzaConstructor.vue";
 
-const pizza = reactive({
-  name: "",
-  dough: "light",
-  size: "normal",
-  sauce: "tomato",
-  ingredients: {},
+const dataStore = useDataStore();
+const pizzaStore = usePizzaStore();
+const cartStore = useCartStore();
+
+const router = useRouter();
+
+const pizzaName = computed({
+  get() {
+    return pizzaStore.name;
+  },
+  set(value) {
+    pizzaStore.setName(value);
+  },
 });
 
-const doughItems = dough.map((item) => normalize(item, doughSizes));
-const sauceItems = sauces.map((item) => normalize(item, saucesEnglishNames));
-const sizeItems = sizes.map((item) => normalize(item, pizzaSizes));
+const doughId = computed({
+  get() {
+    return pizzaStore.doughId;
+  },
+  set(value) {
+    pizzaStore.setDough(value);
+  },
+});
 
-const ingredientItems = ingredients.map((ingredient) =>
-  normalize(ingredient, ingredientsEnglishNames),
-);
+const sizeId = computed({
+  get() {
+    return pizzaStore.sizeId;
+  },
+  set(value) {
+    pizzaStore.setSize(value);
+  },
+});
 
-const sizeMultiplier = computed(
-  () => sizeItems.find((item) => item.value === pizza.size)?.multiplier ?? 1,
-);
-const doughPrice = computed(
-  () => doughItems.find((item) => item.value === pizza.dough)?.price ?? 0,
-);
-const saucePrice = computed(
-  () => sauceItems.find((item) => item.value === pizza.sauce)?.price ?? 0,
-);
-const ingredientsPrice = computed(() =>
-  ingredientItems
-    .map((item) => item.price * (pizza.ingredients[item.value] ?? 0))
-    .reduce((total, number) => total + number, 0),
-);
-const price = computed(
-  () =>
-    (doughPrice.value + saucePrice.value + ingredientsPrice.value) *
-    sizeMultiplier.value,
-);
+const sauceId = computed({
+  get() {
+    return pizzaStore.sauceId;
+  },
+  set(value) {
+    pizzaStore.setSauce(value);
+  },
+});
 
 const disableSubmit = computed(
-  () => pizza.name.length === 0 || price.value === 0,
+  () => pizzaName.value.length === 0 || pizzaStore.getTotalPrice === 0,
 );
 
-function updateIngredients(name, count) {
-  pizza.ingredients[name] = count;
-}
-
-function dropIngredients(ingredient) {
-  const ingredientName = ingredient.value;
-  const count = pizza.ingredients[ingredientName] ?? 0;
-  if (count < MAX_INGREDIENT_COUNT) {
-    pizza.ingredients[ingredientName] = count + 1;
-  }
-}
+const addToCart = () => {
+  cartStore.savePizza(pizzaStore.$state);
+  pizzaStore.$reset();
+  router.push({ name: "cart" });
+};
 </script>
 
 <template>
@@ -78,13 +67,11 @@ function dropIngredients(ingredient) {
       <div class="content__wrapper">
         <h1 class="title title--big">Конструктор пиццы</h1>
         <dough-selector
-          v-model="pizza.dough"
-          :items="doughItems"
+          v-model="doughId"
+          :items="dataStore.doughItems"
         ></dough-selector>
-        <diameter-selector
-          v-model="pizza.size"
-          :items="sizeItems"
-        ></diameter-selector>
+        <diameter-selector v-model="sizeId" :items="dataStore.sizeItems">
+        </diameter-selector>
 
         <div class="content__ingredients">
           <div class="sheet">
@@ -94,26 +81,27 @@ function dropIngredients(ingredient) {
 
             <div class="sheet__content ingredients">
               <sauce-selector
-                v-model="pizza.sauce"
-                :items="sauceItems"
+                v-model="sauceId"
+                :items="dataStore.sauceItems"
               ></sauce-selector>
               <ingredient-selector
-                :items="ingredientItems"
-                :counts="pizza.ingredients"
-                @update="updateIngredients"
+                :items="dataStore.ingredientItems"
+                :counts="pizzaStore.ingredients"
+                @update="pizzaStore.setIngredientCount"
               ></ingredient-selector>
             </div>
           </div>
         </div>
 
         <pizza-constructor
-          v-model="pizza.name"
-          :dough="pizza.dough"
-          :sauce="pizza.sauce"
-          :counts="pizza.ingredients"
-          :price="price"
+          v-model="pizzaName"
+          :dough="pizzaStore.getDough.value"
+          :sauce="pizzaStore.getSauce.value"
+          :counts="pizzaStore.ingredients"
+          :price="pizzaStore.getTotalPrice"
           :disabled="disableSubmit"
-          @drop="dropIngredients"
+          @drop="pizzaStore.dropIngredients"
+          @submit="addToCart"
         ></pizza-constructor>
       </div>
     </form>
@@ -132,7 +120,6 @@ function dropIngredients(ingredient) {
   display: flex;
   align-items: flex-start;
   flex-wrap: wrap;
-
   width: 920px;
   margin: 0 auto;
   padding-right: 2.12%;
@@ -177,7 +164,6 @@ function dropIngredients(ingredient) {
   display: flex;
   align-items: center;
   justify-content: center;
-
   margin-top: 25px;
 
   p {
@@ -201,12 +187,10 @@ function dropIngredients(ingredient) {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-
   margin-top: 8px;
   padding-top: 18px;
   padding-right: 18px;
   padding-left: 18px;
-
   border-top: 1px solid rgba($green-500, 0.1);
 }
 
@@ -214,7 +198,6 @@ function dropIngredients(ingredient) {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-
   width: 100%;
   margin-bottom: 14px;
 
@@ -271,21 +254,17 @@ function dropIngredients(ingredient) {
     @include r-s16-h19;
 
     position: relative;
-
     padding-left: 28px;
 
     &:before {
       @include p_center-v;
 
       display: block;
-
       box-sizing: border-box;
       width: 20px;
       height: 20px;
-
       content: "";
       transition: 0.3s;
-
       border: 1px solid $purple-400;
       border-radius: 50%;
       background-color: $white;
